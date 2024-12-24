@@ -1,86 +1,49 @@
+// api/projects/projects-router.js
 const express = require('express');
-const Projects = require('./projects-model');
+const projectsModel = require('../projects/projects-model'); // Assuming you have this model
 const router = express.Router();
 
-// Middleware to validate project data
-function validateProject(req, res, next) {
-    const { name, description } = req.body;
-    if (!name || !description) {
-        return res.status(400).json({ message: "Name and description are required." });
-    }
-    next();
-}
-
-// GET /api/projects
-router.get('/', async (req, res) => {
-    try {
-        const projects = await Projects.get();
-        res.json(projects);
-    } catch (err) {
-        res.status(500).json({ message: "Failed to get projects." });
-    }
+// [GET] /api/projects - returns an array of projects
+router.get('/', (req, res) => {
+  projectsModel.get() // Assuming get() fetches all projects
+    .then(projects => {
+      res.status(200).json(projects);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to retrieve projects', error: err });
+    });
 });
 
-// GET /api/projects/:id
-router.get('/:id', async (req, res) => {
-    try {
-        const project = await Projects.get(req.params.id);
-        if (project) {
-            res.json(project);
-        } else {
-            res.status(404).json({ message: "Project not found." });
-        }
-    } catch (err) {
-        res.status(500).json({ message: "Failed to get project." });
-    }
+// [GET] /api/projects/:id - returns a specific project by ID
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  projectsModel.get(id)
+    .then(project => {
+      if (project) {
+        res.status(200).json(project);
+      } else {
+        res.status(404).json({ message: `Project with ID ${id} not found` });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to retrieve project', error: err });
+    });
 });
 
-// POST /api/projects
-router.post('/', validateProject, async (req, res) => {
-    try {
-        const project = await Projects.insert(req.body);
-        res.status(201).json(project);
-    } catch (err) {
-        res.status(500).json({ message: "Failed to create project." });
-    }
+// [POST] /api/projects - creates a new project
+router.post('/', (req, res) => {
+  const project = req.body;
+  if (!project.name || !project.description) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+  projectsModel.insert(project)
+    .then(newProject => {
+      res.status(201).json(newProject);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'Failed to create project', error: err });
+    });
 });
 
-// PUT /api/projects/:id
-router.put('/:id', validateProject, async (req, res) => {
-    try {
-        const project = await Projects.update(req.params.id, req.body);
-        if (project) {
-            res.json(project);
-        } else {
-            res.status(404).json({ message: "Project not found." });
-        }
-    } catch (err) {
-        res.status(500).json({ message: "Failed to update project." });
-    }
-});
-
-// DELETE /api/projects/:id
-router.delete('/:id', async (req, res) => {
-    try {
-        const deleted = await Projects.remove(req.params.id);
-        if (deleted) {
-            res.status(204).end();
-        } else {
-            res.status(404).json({ message: "Project not found." });
-        }
-    } catch (err) {
-        res.status(500).json({ message: "Failed to delete project." });
-    }
-});
-
-// GET /api/projects/:id/actions
-router.get('/:id/actions', async (req, res) => {
-    try {
-        const actions = await Projects.getProjectActions(req.params.id);
-        res.json(actions);
-    } catch (err) {
-        res.status(500).json({ message: "Failed to get project actions." });
-    }
-});
-
+// Export the router so it can be used in server.js
 module.exports = router;

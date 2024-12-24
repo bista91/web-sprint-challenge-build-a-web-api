@@ -1,3 +1,4 @@
+
 const commonConfig = {
   client: "sqlite3",
   useNullAsDefault: true,
