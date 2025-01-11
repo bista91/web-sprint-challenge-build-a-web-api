@@ -1,30 +1,33 @@
-// index.js
-
-// Importing necessary modules
 const express = require('express');
 const helmet = require('helmet');
-const projectsRouter = require('./api/projects/projects-router');
-const actionsRouter = require('./api/actions/actions-router');
+const cors = require('cors');
+const actionsRouter = require('./api/actions/actions-router');  // Correct path to actions-router
+const projectsRouter = require('./api/projects/projects-router');  // Correct path to projects-router
+const { validateActionFields } = require('./api/actions/actions-middleware');  // Correct path to actions-middleware
+const { validateProjectFields } = require('./api/projects/projects-middleware');  // Correct path to projects-middleware
 
+const app = express();
 
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
 
-// Initialize the Express application
-const server = express();
+// Routes
+app.use('/api/actions', actionsRouter);
+app.use('/api/projects', projectsRouter);
 
-// Use Helmet for basic security
-server.use(helmet());
-
-// Middleware to parse JSON request bodies
-server.use(express.json());
-
-// Use the routers for projects and actions
-server.use('/api/projects', projectsRouter);
-server.use('/api/actions', actionsRouter);
-
-// Get the port number from process.env.PORT, fallback to 9000 if undefined
-const PORT = process.env.PORT || 9000;  // This ensures it uses process.env.PORT or 9000 if undefined
-
-// Start the server on the defined port
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Error handling middleware (optional)
+app.use((err, req, res, next) => {
+  console.error(err); // Log error
+  res.status(500).json({ message: 'Something went wrong!' });
 });
+
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 9000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

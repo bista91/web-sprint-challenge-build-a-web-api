@@ -1,31 +1,19 @@
-
-const commonConfig = {
-  client: "sqlite3",
-  useNullAsDefault: true,
-  pool: {
-    afterCreate: (conn, done) => {
-      conn.run("PRAGMA foreign_keys = ON", done)
-    },
-  },
-  migrations: {
-    directory: "./data/migrations",
-  },
-  seeds: {
-    directory: "./data/seeds",
-  },
-}
-
 module.exports = {
   development: {
-    ...commonConfig,
+    client: 'sqlite3',
     connection: {
-      filename: "./data/database.db3",
+      filename: './dev.sqlite3',
+    },
+    useNullAsDefault: true,
+    migrations: {
+      directory: './data/migrations', // Corrected path to migrations inside data
+    },
+    seeds: {
+      directory: './data/seeds', // Corrected path to seeds inside data
     },
   },
-  testing: {
-    ...commonConfig,
-    connection: {
-      filename: './data/test.db3',
-    },
-  }
-}
+  production: {
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+  },
+};
