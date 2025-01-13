@@ -43,12 +43,15 @@ router.post('/', validateActionFields, async (req, res) => {
   }
 });
 
+/// [PUT] /api/actions/:id - Update an action by id
 router.put('/:id', async (req, res, next) => {
   try {
       const existingAction = await Actions.get(req.params.id); // Check if action exists
       if (!existingAction) {
           return res.status(404).json({ message: 'Action not found' }); // Return 404 if not found
       }
+
+      console.log('Action found, proceeding with update:', existingAction);
 
       // Continue to validate fields and update the action if it exists
       next();  
@@ -57,12 +60,20 @@ router.put('/:id', async (req, res, next) => {
   }
 }, validateActionFields, async (req, res) => {
   try {
-      const updatedAction = await Actions.update(req.params.id, req.body);
+      // Exclude 'project_id' from the body and proceed with other fields
+      const { project_id, ...updatedFields } = req.body;
+      console.log('Fields to update:', updatedFields); // Check what data we are sending for update
+
+      const updatedAction = await Actions.update(req.params.id, updatedFields);
+      console.log('Updated action:', updatedAction); // Check the returned updated action
+
       res.status(200).json(updatedAction);
   } catch (err) {
+      console.error('Error updating action:', err);
       res.status(500).json({ message: 'Error updating action' });
   }
 });
+
 
 
 

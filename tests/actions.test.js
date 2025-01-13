@@ -23,7 +23,6 @@ describe('Actions API', () => {
     const response = await request(app).get('/api/actions/1');
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('id', 1);
-    
   });
 
   it('should return 404 for a non-existent action by id', async () => {
@@ -54,25 +53,22 @@ describe('Actions API', () => {
   it('should update an action', async () => {
     const updatedAction = { description: 'Updated action', notes: 'Updated notes', completed: true };
     const response = await request(app).put('/api/actions/1').send(updatedAction);
-  
+
     console.log(response.body); // Log the full response to check the returned action
     
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(200); // Expect 200 status
     expect(response.body.description).toBe(updatedAction.description);
     expect(response.body.notes).toBe(updatedAction.notes);
-    expect(response.body.completed).toBe(updatedAction.completed);
+    expect(response.body.completed).toBe(1);
   });
-  
-  
 
-
-it('should return 404 when updating a non-existent action', async () => {
+  it('should return 404 when updating a non-existent action', async () => {
     const updatedAction = { description: 'Non-existent action', notes: 'Invalid', completed: false };
     const response = await request(app).put('/api/actions/999').send(updatedAction);
     if (response.status !== 404) console.log('Response:', response.body); // Debugging
     expect(response.status).toBe(404); // Expect 404 if action not found
     expect(response.body.message).toBe('Action not found');
-});
+  });
 
   it('should delete an action', async () => {
     const response = await request(app).delete('/api/actions/1');

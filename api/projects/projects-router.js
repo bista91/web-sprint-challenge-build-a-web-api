@@ -47,18 +47,18 @@ router.put('/:id', async (req, res) => {
   console.log('Received PUT request for project ID:', id);
   console.log('Request body:', req.body);
 
-  // Check if required fields are provided
-  if (!name || !description) {
-    console.log('Missing required fields: name or description');
-    return res.status(400).json({ message: 'Name and description are required' });
-  }
-
   try {
     // Check if the project exists
     const existingProject = await Projects.get(id);
     if (!existingProject) {
       console.log(`Project with ID ${id} not found`);
       return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if required fields are provided
+    if (!name || !description) {
+      console.log('Missing required fields: name or description');
+      return res.status(400).json({ message: 'Name and description are required' });
     }
 
     // Update the project if it exists
@@ -71,7 +71,6 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ message: 'Error updating project' });
   }
 });
-
 
 // [DELETE] /api/projects/:id - Delete a project by id
 router.delete('/:id', async (req, res) => {
