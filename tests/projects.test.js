@@ -30,10 +30,16 @@ describe('Projects API', () => {
     });
 
     it('should return 404 if project does not exist', async () => {
-      const response = await request(app).get('/api/projects/999');
+      const updatedProject = { name: 'Updated Project', description: 'Updated Description' };
+      
+      const response = await request(app).put('/api/projects/999').send(updatedProject);
+    
+      console.log(response.body); // Log the response to see what comes back
+    
       expect(response.status).toBe(404);
       expect(response.body.message).toBe('Project not found');
     });
+    
   });
 
   describe('POST /api/projects', () => {

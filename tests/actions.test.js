@@ -52,19 +52,18 @@ describe('Actions API', () => {
   });
 
   it('should update an action', async () => {
-    const updatedAction = { 
-        project_id: 1, // Ensure this matches a valid project
-        description: 'Updated action', 
-        notes: 'Updated notes', 
-        completed: true 
-    };
+    const updatedAction = { description: 'Updated action', notes: 'Updated notes', completed: true };
     const response = await request(app).put('/api/actions/1').send(updatedAction);
-    if (response.status !== 200) console.log('Response:', response.body); // Debugging
-    expect(response.status).toBe(200); // Expect 200 on successful update
+  
+    console.log(response.body); // Log the full response to check the returned action
+    
+    expect(response.status).toBe(200);
     expect(response.body.description).toBe(updatedAction.description);
     expect(response.body.notes).toBe(updatedAction.notes);
     expect(response.body.completed).toBe(updatedAction.completed);
-});
+  });
+  
+  
 
 
 it('should return 404 when updating a non-existent action', async () => {

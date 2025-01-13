@@ -33,3 +33,4 @@ function validateActionFields(req, res, next) {
 
   next();
 }
+module.exports = { validateActionFields };

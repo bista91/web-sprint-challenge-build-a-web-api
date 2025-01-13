@@ -17,6 +17,11 @@ app.use(express.json());
 app.use('/api/actions', actionsRouter);
 app.use('/api/projects', projectsRouter);
 
+// Add a route for the root to show a simple message
+app.get('/', (req, res) => {
+  res.status(200).send('Welcome to the API! Use /api/projects or /api/actions.');
+});
+
 // Error handling middleware (optional)
 app.use((err, req, res, next) => {
   console.error(err); // Log error

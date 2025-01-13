@@ -47,9 +47,11 @@ router.put('/:id', async (req, res, next) => {
   try {
       const existingAction = await Actions.get(req.params.id); // Check if action exists
       if (!existingAction) {
-          return res.status(404).json({ message: 'Action not found' });
+          return res.status(404).json({ message: 'Action not found' }); // Return 404 if not found
       }
-      next();
+
+      // Continue to validate fields and update the action if it exists
+      next();  
   } catch (err) {
       next(err);
   }

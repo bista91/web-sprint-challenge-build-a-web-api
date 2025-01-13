@@ -1,5 +1,5 @@
 const app = require('../index');  // Importing from the root index.js
-const port = process.env.PORT || 9001;
+const port = process.env.PORT || 9000;
 
 // Start the server
 app.listen(port, () => {
