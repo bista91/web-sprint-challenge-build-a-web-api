@@ -80,4 +80,8 @@ describe('Actions API', () => {
     expect(response.status).toBe(404); // Expect 404 if action not found
     expect(response.body.message).toBe('Action not found');
   });
+
+  afterAll(async () => {
+    await db.destroy();  // Close the database connection after all tests are done
+  });
 });
